@@ -17,8 +17,10 @@ export default class ShadowElement extends HTMLElement {
     if (!styles) return
 
     const style = document.createElement('style')
-    style.textContent = styles
+    const wxemStyles =
+      document.querySelector('style[data-wxemoji="true"]')?.innerText ?? ''
 
+    style.textContent = `${wxemStyles}${styles}`
     this.shadowRoot.insertBefore(style, this.shadowRoot.firstChild)
   }
 }

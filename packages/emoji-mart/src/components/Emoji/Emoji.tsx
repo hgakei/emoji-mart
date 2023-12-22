@@ -1,5 +1,7 @@
 import { Data } from '../../config'
 import { SearchIndex } from '../../helpers'
+import ReactDOMServer from 'preact/compat/server'
+import ReactDOM from 'preact/compat'
 
 export default function Emoji(props) {
   let { id, skin, emoji } = props
@@ -34,6 +36,36 @@ export default function Emoji(props) {
       ? props.getSpritesheetURL(props.set)
       : `https://cdn.jsdelivr.net/npm/emoji-datasource-${props.set}@14.0.0/img/${props.set}/sheets-256/64.png`
 
+  const renderNative = () => {
+    if (emojiSkin.render) {
+      return (
+        <span
+          style={{
+            fontSize: props.size,
+            fontFamily:
+              '"EmojiMart", "Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji"',
+          }}
+          dangerouslySetInnerHTML={{
+            __html: ReactDOMServer.renderToString(
+              ReactDOM.cloneElement(emojiSkin.render),
+            ),
+          }}
+        ></span>
+      )
+    }
+    return (
+      <span
+        style={{
+          fontSize: props.size,
+          fontFamily:
+            '"EmojiMart", "Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji"',
+        }}
+      >
+        {emojiSkin.native}
+      </span>
+    )
+  }
+
   return (
     <span class="emoji-mart-emoji" data-emoji-set={props.set}>
       {imageSrc ? (
@@ -47,15 +79,7 @@ export default function Emoji(props) {
           src={imageSrc}
         />
       ) : props.set == 'native' ? (
-        <span
-          style={{
-            fontSize: props.size,
-            fontFamily:
-              '"EmojiMart", "Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "Android Emoji"',
-          }}
-        >
-          {emojiSkin.native}
-        </span>
+        renderNative()
       ) : (
         <span
           style={{
